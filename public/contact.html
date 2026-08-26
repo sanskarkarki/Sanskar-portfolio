@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Me | Sanskar's World</title>
+  <meta name="description" content="Contact Sanskar.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#1a202c;
+      --panel:#fffae8;
+      --card:#e2e8f0;
+      --border:#2d3748;
+      --text:#2d3748;
+      --muted:#718096;
+      --accent:#e53e3e;
+      --input:#f8fafc;
+    }
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+      font-family:"Press Start 2P",monospace !important;
+    }
+
+    html,body{
+      min-height:100%;
+      font-family:"Press Start 2P",monospace !important;
+      color:var(--text);
+    }
+
+    body{
+      background:
+        radial-gradient(circle at 20% 10%,#2b6cb0 0,#1a202c 42%,#111827 100%);
+      padding:28px;
+      image-rendering:pixelated;
+    }
+
+    button,
+    input,
+    textarea,
+    a{
+      font-family:"Press Start 2P",monospace !important;
+    }
+
+    .wrap{
+      width:min(1000px,100%);
+      margin:auto;
+    }
+
+    .top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:20px;
+      margin-bottom:30px;
+    }
+
+    .eyebrow{
+      color:var(--accent);
+      font-size:10px;
+      letter-spacing:1px;
+      line-height:1.8;
+    }
+
+    h1{
+      color:var(--text);
+      font-size:28px;
+      line-height:1.5;
+      margin:8px 0 12px;
+      text-transform:uppercase;
+    }
+
+    .intro{
+      color:var(--muted);
+      font-size:9px;
+      line-height:2;
+      max-width:760px;
+    }
+
+    .back{
+      display:inline-block;
+      color:#fff;
+      text-decoration:none;
+      background:var(--accent);
+      border:4px solid var(--border);
+      padding:12px 14px;
+      font-size:9px;
+      box-shadow:0 5px 0 var(--border);
+      white-space:nowrap;
+    }
+
+    .back:hover{
+      transform:translateY(2px);
+      box-shadow:0 3px 0 var(--border);
+    }
+
+    .back:active{
+      transform:translateY(5px);
+      box-shadow:none;
+    }
+
+    .window{
+      position:relative;
+      background:var(--panel);
+      border:4px solid var(--border);
+      border-radius:8px;
+      box-shadow:
+        inset 0 0 0 4px var(--panel),
+        inset 0 0 0 6px var(--border),
+        6px 6px 0 rgba(45,55,72,.45);
+      padding:30px;
+    }
+
+    .window:before,
+    .window:after{
+      content:"";
+      position:absolute;
+      width:12px;
+      height:12px;
+      background:var(--accent);
+      z-index:2;
+    }
+
+    .window:before{
+      top:-4px;
+      left:-4px;
+    }
+
+    .window:after{
+      bottom:-4px;
+      right:-4px;
+    }
+
+    .section-title{
+      color:var(--accent);
+      font-size:12px;
+      font-weight:bold;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:22px;
+    }
+
+    .section-title:before{
+      content:"▶";
+      color:var(--accent);
+      font-size:9px;
+    }
+
+    /* FORM */
+
+    .contact-form{
+      background:var(--card);
+      border:4px solid var(--border);
+      padding:24px;
+      box-shadow:4px 4px 0 rgba(45,55,72,.35);
+    }
+
+    .field-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:9px;
+    }
+
+    label{
+      color:var(--text);
+      font-size:8px;
+      line-height:1.6;
+      text-transform:uppercase;
+    }
+
+    input,
+    textarea{
+      width:100%;
+      border:4px solid var(--border);
+      border-radius:0;
+      background:var(--input);
+      color:var(--text);
+      outline:none;
+      padding:14px;
+      font-size:8px;
+      line-height:1.8;
+      image-rendering:pixelated;
+    }
+
+    input{
+      height:52px;
+    }
+
+    textarea{
+      min-height:190px;
+      resize:vertical;
+    }
+
+    input:focus,
+    textarea:focus{
+      border-color:var(--accent);
+      box-shadow:4px 4px 0 rgba(229,62,62,.25);
+    }
+
+    input::placeholder,
+    textarea::placeholder{
+      color:#9aa5b5;
+      opacity:1;
+    }
+
+    .submit-row{
+      display:flex;
+      justify-content:flex-end;
+      margin-top:20px;
+    }
+
+    .submit{
+      color:#fff;
+      background:var(--accent);
+      border:4px solid var(--border);
+      padding:14px 18px;
+      font-size:9px;
+      cursor:pointer;
+      box-shadow:5px 5px 0 var(--border);
+    }
+
+    .submit:hover{
+      transform:translate(2px,2px);
+      box-shadow:3px 3px 0 var(--border);
+    }
+
+    .submit:active{
+      transform:translate(5px,5px);
+      box-shadow:none;
+    }
+
+    .required{
+      color:var(--accent);
+    }
+
+    .success{
+      display:none;
+      margin-top:18px;
+      padding:14px;
+      border:4px solid var(--border);
+      background:var(--panel);
+      color:var(--accent);
+      font-size:8px;
+      line-height:2;
+    }
+
+    .submit:disabled{
+      opacity:.65;
+      cursor:wait;
+      transform:none;
+      box-shadow:4px 4px 0 var(--border);
+    }
+
+    .footer{
+      margin-top:24px;
+      text-align:center;
+      color:var(--muted);
+      font-size:8px;
+      line-height:1.8;
+    }
+
+    @media(max-width:700px){
+      body{
+        padding:14px;
+      }
+
+      .top{
+        flex-direction:column-reverse;
+      }
+
+      .back{
+        width:100%;
+        text-align:center;
+      }
+
+      .window{
+        padding:20px;
+      }
+
+      h1{
+        font-size:21px;
+      }
+
+      .field-row{
+        grid-template-columns:1fr;
+      }
+
+      .contact-form{
+        padding:18px;
+      }
+
+      .submit-row{
+        justify-content:stretch;
+      }
+
+      .submit{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="wrap">
+
+    <div class="top">
+      <div>
+        <div class="eyebrow">SANSKAR'S WORLD / CONTACT</div>
+        <h1>Contact Me</h1>
+        <p class="intro">
+          Have a project, idea, collaboration, or question?
+          Send a message and get in touch with Sanskar.
+        </p>
+      </div>
+
+      <a class="back" href="/">
+        ← Back to World
+      </a>
+    </div>
+
+    <section class="window">
+
+      <div class="section-title">
+        SEND A MESSAGE
+      </div>
+
+      <form
+        class="contact-form"
+        id="contactForm"
+        action="https://formsubmit.co/ajax/sanskar1030karki@gmail.com"
+        method="POST"
+      >
+        <input type="hidden" name="_subject" value="New Portfolio Contact Message">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="true">
+        <input type="hidden" name="_replyto" value="">
+
+        <div class="field-row">
+
+          <div class="field">
+            <label for="firstName">
+              First Name <span class="required">*</span>
+            </label>
+
+            <input
+              id="firstName"
+              name="firstName"
+              type="text"
+              placeholder="ENTER FIRST NAME"
+              autocomplete="given-name"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="lastName">
+              Last Name <span class="required">*</span>
+            </label>
+
+            <input
+              id="lastName"
+              name="lastName"
+              type="text"
+              placeholder="ENTER LAST NAME"
+              autocomplete="family-name"
+              required
+            >
+          </div>
+
+        </div>
+
+        <div class="field-row">
+
+          <div class="field">
+            <label for="phone">
+              Contact Number <span class="required">*</span>
+            </label>
+
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              placeholder="ENTER CONTACT NUMBER"
+              autocomplete="tel"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="email">
+              Email <span class="required">*</span>
+            </label>
+
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="ENTER EMAIL ADDRESS"
+              autocomplete="email"
+              required
+            >
+          </div>
+
+        </div>
+
+        <div class="field">
+          <label for="message">
+            Why Are You Contacting Us? <span class="required">*</span>
+          </label>
+
+          <textarea
+            id="message"
+            name="message"
+            placeholder="WRITE YOUR MESSAGE HERE..."
+            required
+          ></textarea>
+        </div>
+
+        <div class="submit-row">
+          <button class="submit" type="submit">
+            SEND MESSAGE →
+          </button>
+        </div>
+
+        <div class="success" id="successMessage">
+          MESSAGE SENT // THANK YOU FOR GETTING IN TOUCH.
+        </div>
+
+        <div class="success" id="errorMessage">
+          MESSAGE FAILED // PLEASE TRY AGAIN.
+        </div>
+
+      </form>
+
+    </section>
+
+    <div class="footer">
+      SANSKAR'S WORLD // CONTACT // MESSAGE TERMINAL
+    </div>
+
+  </main>
+
+  <script>
+    const contactForm = document.getElementById("contactForm");
+    const successMessage = document.getElementById("successMessage");
+    const errorMessage = document.getElementById("errorMessage");
+    const submitButton = contactForm.querySelector(".submit");
+
+    contactForm.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      successMessage.style.display = "none";
+      errorMessage.style.display = "none";
+
+      const originalText = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.textContent = "SENDING...";
+
+      const formData = new FormData(contactForm);
+
+      // Let FormSubmit use the visitor's email as Reply-To.
+      formData.set("_replyto", document.getElementById("email").value);
+
+      try {
+        const response = await fetch(contactForm.action, {
+          method: "POST",
+          headers: {
+            "Accept": "application/json"
+          },
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success !== false) {
+          contactForm.reset();
+          successMessage.style.display = "block";
+          successMessage.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+          });
+        } else {
+          throw new Error(result.message || "Submission failed");
+        }
+      } catch (error) {
+        console.error("Contact form error:", error);
+        errorMessage.style.display = "block";
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
+    });
+  </script>
+
+</body>
+</html>
