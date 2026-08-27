@@ -15,7 +15,6 @@ type Language = typeof languages[number];
 let currentLang: Language = "en";
 
 const WORLD_STATE_KEY = "sanskar-world-state-v3";
-const WORLD_RETURN_KEY = "sanskar-world-return-v3";
 
 type SavedWorldState = {
     version: 3;
@@ -91,50 +90,11 @@ function saveWorldState(state: SavedWorldState): void {
     }
 }
 
-function markPortfolioReturn(): void {
-    try {
-        localStorage.setItem(WORLD_RETURN_KEY, "1");
-    } catch {
-        // Ignore storage failures.
-    }
-
-    try {
-        sessionStorage.setItem(WORLD_RETURN_KEY, "1");
-    } catch {
-        // Ignore storage failures.
-    }
-}
-
-function consumePortfolioReturn(): boolean {
-    let returning = false;
-
-    try {
-        returning = localStorage.getItem(WORLD_RETURN_KEY) === "1";
-        localStorage.removeItem(WORLD_RETURN_KEY);
-    } catch {
-        // Ignore storage failures.
-    }
-
-    try {
-        if (sessionStorage.getItem(WORLD_RETURN_KEY) === "1") {
-            returning = true;
-        }
-        sessionStorage.removeItem(WORLD_RETURN_KEY);
-    } catch {
-        // Ignore storage failures.
-    }
-
-    return returning;
-}
-
 function isReturningFromPortfolio(): boolean {
     try {
-        return (
-            new URLSearchParams(window.location.search).get("return") === "1" ||
-            consumePortfolioReturn()
-        );
+        return new URLSearchParams(window.location.search).get("return") === "1";
     } catch {
-        return consumePortfolioReturn();
+        return false;
     }
 }
 
@@ -721,7 +681,6 @@ function openExternalLinkSafely(link: string): void {
     ]);
 
     if (sameTabPages.has(parsedUrl.pathname)) {
-        markPortfolioReturn();
         parsedUrl.searchParams.set("return", "1");
         window.location.href = parsedUrl.toString();
         return;
