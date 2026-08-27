@@ -1540,7 +1540,8 @@ k.scene("main", async () => {
                             if (
                                 action.type === 'open_link' &&
                                 typeof action.href === "string" &&
-                                target.poiId !== "company-hq"
+                                target.poiId !== "company-hq" &&
+                                target.poiId !== "github-house"
                             ) {
                                 // Find translation for action label based on action id, default to translated action mapping
                                 const translatedActions =
@@ -1557,7 +1558,7 @@ k.scene("main", async () => {
                     // Explicit external social destinations.
                     // These override any stale/missing glossary URLs for the new buildings.
                     const externalPageByPoiId: Record<string, string> = {
-                        "github-house": "https://github.com/Sanskar-Karki",
+                        "github-house": "https://github.com/sanskarkarki",
                         "linkedin-house": "https://www.linkedin.com/in/sanskar-karki-860683246/",
                     };
 
