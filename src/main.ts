@@ -14,7 +14,8 @@ type Language = typeof languages[number];
 
 let currentLang: Language = "en";
 
-const WORLD_STATE_KEY = "sanskar-world-state-v2";
+const WORLD_STATE_KEY = "sanskar-world-state-v3";
+const LEGACY_WORLD_STATE_KEY = "sanskar-world-state-v2";
 
 type SavedWorldState = {
     version: 2;
@@ -29,7 +30,15 @@ type SavedWorldState = {
 
 function readSavedWorldState(): SavedWorldState | null {
     try {
-        const raw = sessionStorage.getItem(WORLD_STATE_KEY);
+        // localStorage is intentional here: the player is moving between
+        // separate HTML documents, and the world position must survive that
+        // full-page navigation reliably.
+        const raw =
+            localStorage.getItem(WORLD_STATE_KEY) ??
+            localStorage.getItem(LEGACY_WORLD_STATE_KEY) ??
+            sessionStorage.getItem(WORLD_STATE_KEY) ??
+            sessionStorage.getItem(LEGACY_WORLD_STATE_KEY);
+
         if (!raw) return null;
 
         const state = JSON.parse(raw) as Partial<SavedWorldState>;
@@ -66,16 +75,37 @@ function readSavedWorldState(): SavedWorldState | null {
 }
 
 function saveWorldState(state: SavedWorldState): void {
+    const serialized = JSON.stringify(state);
+
     try {
-        sessionStorage.setItem(WORLD_STATE_KEY, JSON.stringify(state));
+        localStorage.setItem(WORLD_STATE_KEY, serialized);
     } catch {
-        // Storage can be unavailable in private/restricted browsing contexts.
+        // Fall back to sessionStorage if persistent storage is blocked.
+        try {
+            sessionStorage.setItem(WORLD_STATE_KEY, serialized);
+        } catch {
+            // Storage can be unavailable in restricted browsing contexts.
+        }
     }
 }
 
 function isReturningFromPortfolio(): boolean {
     try {
-        return new URLSearchParams(window.location.search).get("return") === "1";
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("return") === "1") return true;
+
+        // Fallback for a normal Back-to-World navigation from one of the
+        // four portfolio pages.
+        const referrer = document.referrer;
+        if (!referrer) return false;
+
+        const referrerUrl = new URL(referrer);
+        return new Set([
+            "/about.html",
+            "/projects.html",
+            "/publication.html",
+            "/contact.html",
+        ]).has(referrerUrl.pathname);
     } catch {
         return false;
     }
@@ -734,10 +764,21 @@ k.scene("main", async () => {
 
     const savedWorldState = readSavedWorldState();
     const returningFromPortfolio = isReturningFromPortfolio();
-    const shouldRestoreWorld = returningFromPortfolio && savedWorldState !== null;
+    const shouldRestoreWorld =
+        returningFromPortfolio && savedWorldState !== null;
 
     if (shouldRestoreWorld && savedWorldState) {
         currentLang = savedWorldState.language;
+
+        // Remove the one-shot query after boot so a normal refresh does not
+        // keep pretending to be a return from a portfolio page.
+        if (window.location.search.includes("return=1")) {
+            window.history.replaceState(
+                window.history.state,
+                document.title,
+                window.location.pathname + window.location.hash,
+            );
+        }
     }
 
     // Map Background
@@ -1155,7 +1196,27 @@ k.scene("main", async () => {
                         // the exact player position.
                         persistCurrentWorldState();
 
-                        openExternalLinkSafely(action.link);
+                        // Same-tab portfolio pages return with ?return=1.
+                        // External links retain their existing new-tab behavior.
+                        let destination = action.link;
+                        try {
+                            const destinationUrl = new URL(action.link, window.location.href);
+                            if (
+                                new Set([
+                                    "/about.html",
+                                    "/projects.html",
+                                    "/publication.html",
+                                    "/contact.html",
+                                ]).has(destinationUrl.pathname)
+                            ) {
+                                destinationUrl.searchParams.set("return", "1");
+                                destination = destinationUrl.toString();
+                            }
+                        } catch {
+                            // openExternalLinkSafely will reject malformed URLs.
+                        }
+
+                        openExternalLinkSafely(destination);
 
                         // Refocus game to avoid getting stuck if user clicks back to the window.
                         if (gameStarted) k.canvas.focus();
@@ -1291,6 +1352,18 @@ k.scene("main", async () => {
             showBanners,
         });
     };
+
+    // Save one final snapshot when the document is leaving. This is the
+    // critical hand-off between the game document and the four HTML pages.
+    addDomListener(window, "pagehide", () => {
+        persistCurrentWorldState();
+    });
+
+    addDomListener(document, "visibilitychange", () => {
+        if (document.visibilityState === "hidden") {
+            persistCurrentWorldState();
+        }
+    });
 
     // Camera follow with lerp and clamp to never show black borders
     trackKaboom(player.onUpdate(() => {
