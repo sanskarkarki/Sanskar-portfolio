@@ -149,7 +149,13 @@ const DIALOG_AVATAR_BY_NPC_ID: Record<string, string> = {
 };
 
 const DIALOG_AVATAR_BY_POI_ID: Record<string, string> = {
+    // User-supplied pixel-art icons. Nothing else in the dialogue UI is changed.
     "company-hq": "/assets/pictures/about-me.png",
+    "github-house": "/assets/pictures/github.png",
+    "linkedin-house": "/assets/pictures/linkedin.png",
+    "projects-lab": "/assets/pictures/project.png",
+    "twitter-house": "/assets/pictures/publication.png",
+    "youtube-house": "/assets/pictures/contact.png",
 };
 
 const t = {
